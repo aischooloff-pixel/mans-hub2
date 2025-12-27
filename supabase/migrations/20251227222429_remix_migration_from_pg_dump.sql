@@ -183,7 +183,7 @@ CREATE TABLE public.moderation_logs (
     action character varying(20) NOT NULL,
     reason text,
     created_at timestamp with time zone DEFAULT now(),
-    CONSTRAINT moderation_logs_action_check CHECK (((action)::text = ANY ((ARRAY['approved'::character varying, 'rejected'::character varying])::text[])))
+    CONSTRAINT moderation_logs_action_check CHECK (((action)::text = ANY (ARRAY[('approved'::character varying)::text, ('rejected'::character varying)::text])))
 );
 
 
@@ -493,12 +493,35 @@ CREATE POLICY "Admins can view all roles" ON public.user_roles FOR SELECT USING 
 
 
 --
+-- Name: profiles Anyone can insert profiles; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY "Anyone can insert profiles" ON public.profiles FOR INSERT WITH CHECK (true);
+
+
+--
 -- Name: articles Approved articles are viewable by everyone; Type: POLICY; Schema: public; Owner: -
 --
 
 CREATE POLICY "Approved articles are viewable by everyone" ON public.articles FOR SELECT USING (((status = 'approved'::text) OR (author_id IN ( SELECT profiles.id
    FROM public.profiles
   WHERE (profiles.user_id = auth.uid())))));
+
+
+--
+-- Name: articles Authenticated users can insert articles; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY "Authenticated users can insert articles" ON public.articles FOR INSERT WITH CHECK ((author_id IN ( SELECT profiles.id
+   FROM public.profiles)));
+
+
+--
+-- Name: articles Authors can update own articles; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY "Authors can update own articles" ON public.articles FOR UPDATE USING ((author_id IN ( SELECT profiles.id
+   FROM public.profiles)));
 
 
 --
@@ -513,6 +536,13 @@ CREATE POLICY "Only admins can access settings" ON public.admin_settings USING (
 --
 
 CREATE POLICY "Profiles are viewable by everyone" ON public.profiles FOR SELECT USING (true);
+
+
+--
+-- Name: profiles Profiles can be updated by owner; Type: POLICY; Schema: public; Owner: -
+--
+
+CREATE POLICY "Profiles can be updated by owner" ON public.profiles FOR UPDATE USING (true);
 
 
 --
@@ -534,38 +564,6 @@ CREATE POLICY "Service role only" ON public.moderation_short_ids USING (false);
 --
 
 CREATE POLICY "Service role only" ON public.pending_rejections USING (false);
-
-
---
--- Name: articles Users can insert own articles; Type: POLICY; Schema: public; Owner: -
---
-
-CREATE POLICY "Users can insert own articles" ON public.articles FOR INSERT WITH CHECK ((author_id IN ( SELECT profiles.id
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid()))));
-
-
---
--- Name: profiles Users can insert own profile; Type: POLICY; Schema: public; Owner: -
---
-
-CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH CHECK ((auth.uid() = user_id));
-
-
---
--- Name: articles Users can update own articles; Type: POLICY; Schema: public; Owner: -
---
-
-CREATE POLICY "Users can update own articles" ON public.articles FOR UPDATE USING ((author_id IN ( SELECT profiles.id
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid()))));
-
-
---
--- Name: profiles Users can update own profile; Type: POLICY; Schema: public; Owner: -
---
-
-CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING ((auth.uid() = user_id));
 
 
 --
