@@ -74,13 +74,13 @@ export const mockUsers: User[] = [
 ];
 
 export const mockCategories: Category[] = [
-  { id: '1', name: 'Развитие', slug: 'development', icon: '🚀', topics_count: 4 },
-  { id: '2', name: 'Финансы', slug: 'finance', icon: '💰', topics_count: 3 },
-  { id: '3', name: 'Здоровье', slug: 'health', icon: '💪', topics_count: 3 },
-  { id: '4', name: 'Отношения', slug: 'relationships', icon: '❤️', topics_count: 2 },
-  { id: '5', name: 'Карьера', slug: 'career', icon: '💼', topics_count: 3 },
-  { id: '6', name: 'Стиль', slug: 'style', icon: '👔', topics_count: 2 },
-  { id: '7', name: 'Жизнь', slug: 'life', icon: '🌟', topics_count: 0 },
+  { id: '1', name: 'Предпринимательство', slug: 'business', icon: '💼', topics_count: 4 },
+  { id: '2', name: 'Саморазвитие', slug: 'self-development', icon: '🚀', topics_count: 3 },
+  { id: '3', name: 'Нейросети', slug: 'neural-networks', icon: '🤖', topics_count: 3 },
+  { id: '4', name: 'Навыки', slug: 'skills', icon: '🎯', topics_count: 2 },
+  { id: '5', name: 'Образование', slug: 'education', icon: '📚', topics_count: 3 },
+  { id: '6', name: 'Психология', slug: 'psychology', icon: '🧠', topics_count: 2 },
+  { id: '7', name: 'Социализация', slug: 'socialization', icon: '🤝', topics_count: 0 },
 ];
 
 export const mockTopics: Topic[] = [
