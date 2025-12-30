@@ -178,7 +178,7 @@ export function ReviewsModal({ isOpen, onClose }: ReviewsModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[85vh] max-w-md p-0">
-        <DialogHeader className="px-4 pt-4">
+        <DialogHeader className="px-4 pt-4 pr-12">
           <DialogTitle className="flex items-center justify-between">
             <span>Отзывы</span>
             <div className="flex items-center gap-2 text-sm font-normal text-muted-foreground">
