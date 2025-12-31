@@ -356,7 +356,7 @@ export default function Profile() {
 
           {/* Bio for Plus/Premium users */}
           {(profile.subscription_tier === 'plus' || profile.subscription_tier === 'premium') && profile.bio && (
-            <p className="mt-3 text-sm text-muted-foreground">{profile.bio}</p>
+            <p className="mt-3 text-sm text-muted-foreground line-clamp-2 break-words">{profile.bio}</p>
           )}
 
           {/* Products Button for Premium users */}

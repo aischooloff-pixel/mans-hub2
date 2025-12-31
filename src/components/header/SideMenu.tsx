@@ -38,7 +38,10 @@ export function SideMenu({ isOpen, onClose }: SideMenuProps) {
       ? profile?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.username || profile?.first_name || 'user'}`
       : `https://api.dicebear.com/7.x/shapes/svg?seed=${profile?.id || 'guest'}`;
 
-  const isPremium = !!profile?.is_premium;
+  const subscriptionTier = profile?.subscription_tier || 'free';
+  const isPremium = subscriptionTier === 'premium';
+  const isPlus = subscriptionTier === 'plus';
+  const isPaidUser = isPremium || isPlus;
 
   const handleFavoritesClick = () => {
     onClose();
@@ -67,12 +70,16 @@ export function SideMenu({ isOpen, onClose }: SideMenuProps) {
     setter(false);
   };
 
+  // Build menu items based on subscription tier
   const menuItems = [
     { icon: Home, label: 'Главная', path: '/', onClick: undefined },
     { icon: FileText, label: 'Хаб', path: '/hub', onClick: undefined },
     { icon: Bookmark, label: 'Избранное', path: undefined, onClick: handleFavoritesClick },
     { icon: User, label: 'Профиль', path: '/profile', onClick: undefined },
-    { icon: Crown, label: 'Premium', path: undefined, onClick: handlePremiumClick },
+    // Show "Upgrade to Premium" for Plus users, hide for Premium
+    ...(isPlus ? [{ icon: Crown, label: 'Перейти на Premium', path: undefined, onClick: handlePremiumClick }] : []),
+    // Show "Premium" for free users (leads to Plus first)
+    ...(!isPaidUser ? [{ icon: Crown, label: 'Premium', path: undefined, onClick: handlePremiumClick }] : []),
     { icon: Settings, label: 'Настройки', path: undefined, onClick: handleSettingsClick },
     { icon: HelpCircle, label: 'FAQ', path: undefined, onClick: handleFAQClick },
     { icon: MessageSquare, label: 'Telegram канал', path: 'https://t.me/boyshub', external: true, onClick: undefined },
@@ -163,8 +170,16 @@ export function SideMenu({ isOpen, onClose }: SideMenuProps) {
             </ul>
           </nav>
 
-          {/* Premium CTA - only for non-premium users */}
-          {!isPremium && (
+          {/* CTA based on subscription tier */}
+          {!isPaidUser && (
+            <div className="absolute bottom-4 left-4 right-4">
+              <Button className="w-full gap-2" onClick={handlePremiumClick}>
+                <Crown className="h-4 w-4" />
+                Перейти на Plus
+              </Button>
+            </div>
+          )}
+          {isPlus && (
             <div className="absolute bottom-4 left-4 right-4">
               <Button className="w-full gap-2" onClick={handlePremiumClick}>
                 <Crown className="h-4 w-4" />

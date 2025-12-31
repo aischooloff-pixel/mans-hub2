@@ -270,14 +270,22 @@ export function ProductsModal({ isOpen, onClose, userProfileId }: ProductsModalP
             </div>
           ) : (
             <>
-              <Button
-                onClick={() => setIsCreating(true)}
-                className="w-full mb-4 gap-2"
-                variant="outline"
-              >
-                <Plus className="h-4 w-4" />
-                Добавить продукт
-              </Button>
+              {/* Premium users can add max 1 product */}
+              {products.length < 1 && (
+                <Button
+                  onClick={() => setIsCreating(true)}
+                  className="w-full mb-4 gap-2"
+                  variant="outline"
+                >
+                  <Plus className="h-4 w-4" />
+                  Добавить продукт
+                </Button>
+              )}
+              {products.length >= 1 && (
+                <div className="mb-4 text-center text-sm text-muted-foreground">
+                  Максимум 1 продукт для Premium подписки
+                </div>
+              )}
 
               {loading ? (
                 <div className="py-8 text-center text-muted-foreground">Загрузка...</div>
