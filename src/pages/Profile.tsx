@@ -316,31 +316,45 @@ export default function Profile() {
 
               {/* Social Links for Premium Users */}
               {profile.is_premium && (
-                <div className="mt-3 flex items-center gap-3">
+                <div className="mt-3 flex items-center gap-3 flex-wrap">
                   {profile.telegram_channel && (
                     <a
                       href={
                         profile.telegram_channel.startsWith('@')
                           ? `https://t.me/${profile.telegram_channel.slice(1)}`
-                          : profile.telegram_channel
+                          : profile.telegram_channel.startsWith('https://t.me/')
+                            ? profile.telegram_channel
+                            : `https://t.me/${profile.telegram_channel}`
                       }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
                     >
                       <Send className="h-3 w-3" />
-                      <span>{profile.telegram_channel}</span>
+                      <span>
+                        {profile.telegram_channel.startsWith('@')
+                          ? profile.telegram_channel
+                          : profile.telegram_channel.includes('/')
+                            ? '@' + profile.telegram_channel.split('/').pop()
+                            : '@' + profile.telegram_channel}
+                      </span>
                     </a>
                   )}
                   {profile.website && (
                     <a
-                      href={profile.website}
+                      href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
                     >
                       <Globe className="h-3 w-3" />
-                      <span className="max-w-[120px] truncate">{profile.website.replace(/^https?:\/\//, '')}</span>
+                      <span className="max-w-[100px] truncate">
+                        {(() => {
+                          const clean = profile.website.replace(/^https?:\/\//, '').replace(/\/$/, '');
+                          const parts = clean.split('/');
+                          return parts.length > 1 ? parts[parts.length - 1] : clean;
+                        })()}
+                      </span>
                     </a>
                   )}
                   <button onClick={() => setIsSocialLinksOpen(true)} className="text-xs text-primary hover:underline">

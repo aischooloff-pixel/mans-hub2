@@ -37,6 +37,7 @@ export function PremiumModal({ isOpen, onClose }: PremiumModalProps) {
       originalPrice: { monthly: 598, yearly: 5980 },
       features: [
         { icon: MessageCircle, text: 'Соц сети в профиле' },
+        { icon: FileText, text: 'Описание профиля' },
         { icon: Bot, text: 'ИИ ассистент' },
         { icon: Users, text: 'Закрытое сообщество' },
         { icon: Infinity, text: 'Безлимитные публикации' },
