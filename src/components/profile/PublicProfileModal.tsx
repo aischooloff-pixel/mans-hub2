@@ -46,6 +46,7 @@ interface PublicProfile {
   telegram_channel: string | null;
   website: string | null;
   created_at: string;
+  is_blocked: boolean;
 }
 
 interface Product {
@@ -396,6 +397,21 @@ export function PublicProfileModal({ isOpen, onClose, authorId }: PublicProfileM
               </div>
             ) : profile ? (
               <>
+                {/* Blocked user display */}
+                {profile.is_blocked ? (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <div className="h-20 w-20 rounded-full border-2 border-destructive bg-destructive/10 flex items-center justify-center mb-6">
+                      <span className="text-3xl">🚫</span>
+                    </div>
+                    <h2 className="font-heading text-2xl font-bold text-destructive mb-2">
+                      Заблокирован
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      Этот пользователь заблокирован
+                    </p>
+                  </div>
+                ) : (
+                <>
                 {/* Profile Header */}
                 <div className="flex flex-col items-center text-center mb-6">
                   <div className="relative mb-4">
@@ -557,7 +573,7 @@ export function PublicProfileModal({ isOpen, onClose, authorId }: PublicProfileM
                               <span className="font-bold text-xl text-primary">
                                 {product.price.toLocaleString()} {product.currency === 'RUB' ? '₽' : product.currency === 'USD' ? '$' : '€'}
                               </span>
-                              {product.link && (
+                              {product.link ? (
                                 <a
                                   href={product.link}
                                   target="_blank"
@@ -567,6 +583,8 @@ export function PublicProfileModal({ isOpen, onClose, authorId }: PublicProfileM
                                   <ShoppingBag className="h-4 w-4" />
                                   Купить
                                 </a>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">Свяжитесь с автором</span>
                               )}
                             </div>
                           </div>
@@ -628,6 +646,8 @@ export function PublicProfileModal({ isOpen, onClose, authorId }: PublicProfileM
                   <Flag className="h-4 w-4 mr-2" />
                   Пожаловаться на пользователя
                 </Button>
+                </>
+                )}
               </>
             ) : (
               <p className="text-center text-muted-foreground">Профиль не найден</p>

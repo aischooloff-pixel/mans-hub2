@@ -527,6 +527,9 @@ ${product.rejection_reason ? `❌ <b>Причина отклонения:</b> ${
       { text: '❌ Отклонить', callback_data: `product_reject:${product.id}` },
     ]);
   }
+  
+  // Always add delete button
+  buttons.push([{ text: '🗑 Удалить продукт', callback_data: `product_delete:${product.id}` }]);
 
   const keyboard = { inline_keyboard: buttons };
 
@@ -3113,6 +3116,7 @@ async function handleProducts(chatId: number, userId: number, page: number = 0, 
       price,
       currency,
       status,
+      short_code,
       created_at,
       user:user_profile_id(telegram_id, username, first_name)
     `)
@@ -3145,6 +3149,7 @@ async function handleProducts(chatId: number, userId: number, page: number = 0, 
       const userDisplay = user?.username ? '@' + user.username : user?.first_name || `ID:${user?.telegram_id}`;
       
       message += `${statusIcon} <b>${product.title}</b>\n`;
+      message += `   🏷 <code>${product.short_code || 'N/A'}</code>\n`;
       message += `   💰 ${product.price} ${product.currency}\n`;
       message += `   👤 ${userDisplay}\n\n`;
     }
@@ -3306,10 +3311,71 @@ async function handleProductRejectionReason(chatId: number, userId: number, text
 
 Вы можете исправить продукт и отправить повторно.`
     );
+    
+    // Create notification in database
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('telegram_id', user.telegram_id)
+      .maybeSingle();
+    
+    if (userProfile) {
+      await supabase.from('notifications').insert({
+        user_profile_id: userProfile.id,
+        type: 'product_rejected',
+        message: `Ваш продукт "${product.title}" был отклонён: ${text}`,
+        is_read: false,
+      });
+    }
   }
 
   await sendAdminMessage(chatId, `❌ Продукт "${product.title}" отклонён\n\n<b>Причина:</b> ${text}`);
   return true;
+}
+
+// Handle product delete callback
+async function handleProductDelete(callbackQuery: any, productId: string) {
+  const { id, message } = callbackQuery;
+
+  const { data: product, error: fetchError } = await supabase
+    .from('user_products')
+    .select('id, title, user:user_profile_id(telegram_id)')
+    .eq('id', productId)
+    .maybeSingle();
+
+  if (fetchError || !product) {
+    await answerCallbackQuery(id, '❌ Продукт не найден');
+    return;
+  }
+
+  const { error } = await supabase
+    .from('user_products')
+    .delete()
+    .eq('id', productId);
+
+  if (error) {
+    console.error('Error deleting product:', error);
+    await answerCallbackQuery(id, '❌ Ошибка удаления');
+    return;
+  }
+
+  const user = product.user as any;
+  
+  // Notify user
+  if (user?.telegram_id) {
+    await sendUserMessage(
+      user.telegram_id,
+      `🗑 <b>Ваш продукт был удалён</b>
+
+📦 "${product.title}"
+
+Продукт удалён администратором.`
+    );
+  }
+
+  await answerCallbackQuery(id, '🗑 Продукт удалён');
+  await editMessageReplyMarkup(message.chat.id, message.message_id);
+  await sendAdminMessage(message.chat.id, `🗑 Продукт "${product.title}" удалён`);
 }
 
 // Handle callback queries
@@ -3429,6 +3495,8 @@ async function handleCallbackQuery(callbackQuery: any) {
     await handleProductApprove(callbackQuery, param);
   } else if (action === 'product_reject') {
     await handleProductRejectStart(callbackQuery, param);
+  } else if (action === 'product_delete') {
+    await handleProductDelete(callbackQuery, param);
   } else if (action === 'products') {
     await answerCallbackQuery(callbackQuery.id);
     await handleProducts(message.chat.id, from.id, parseInt(param || '0'), message.message_id);
