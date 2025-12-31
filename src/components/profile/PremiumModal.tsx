@@ -262,30 +262,35 @@ export function PremiumModal({ isOpen, onClose }: PremiumModalProps) {
           </div>
 
           {/* Promo Code Input */}
-          <div className="flex gap-2 mb-6">
-            <div className="relative flex-1">
-              <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                placeholder="Промокод"
-                className="pl-9"
-                disabled={promoApplied}
-              />
+          <div className="mb-6">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  placeholder="Промокод"
+                  className="pl-9"
+                  disabled={promoApplied}
+                />
+              </div>
+              <Button
+                onClick={handleApplyPromo}
+                disabled={promoLoading || promoApplied || !promoCode.trim()}
+                variant={promoApplied ? 'secondary' : 'default'}
+              >
+                {promoLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : promoApplied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  'Применить'
+                )}
+              </Button>
             </div>
-            <Button
-              onClick={handleApplyPromo}
-              disabled={promoLoading || promoApplied || !promoCode.trim()}
-              variant={promoApplied ? 'secondary' : 'default'}
-            >
-              {promoLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : promoApplied ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                'Применить'
-              )}
-            </Button>
+            <p className="text-xs text-muted-foreground mt-2 text-center">
+              Промокоды в нашем <span className="underline">канале</span>
+            </p>
           </div>
 
           {/* Billing Toggle */}

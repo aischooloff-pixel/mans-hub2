@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Crown, Star, FileText, Calendar, ExternalLink, Globe, Flag, Package, Play, Plus, Minus, TrendingUp, TrendingDown } from 'lucide-react';
+import { X, Crown, Star, FileText, Calendar, ExternalLink, Globe, Flag, Package, Play, Plus, Minus, TrendingUp, TrendingDown, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
@@ -540,20 +540,20 @@ export function PublicProfileModal({ isOpen, onClose, authorId }: PublicProfileM
                               <span className="font-semibold text-primary">
                                 {product.price.toLocaleString()} {product.currency === 'RUB' ? '₽' : product.currency === 'USD' ? '$' : '€'}
                               </span>
-                              {product.link && (
-                                <a
-                                  href={product.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-xs text-primary flex items-center gap-1 hover:underline"
-                                >
-                                  <ExternalLink className="h-3 w-3" />
-                                  Подробнее
-                                </a>
-                              )}
                             </div>
                           </div>
                         </div>
+                        {product.link && (
+                          <a
+                            href={product.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-3 flex items-center justify-center gap-2 w-full rounded-lg bg-primary py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                          >
+                            <ShoppingBag className="h-4 w-4" />
+                            Купить
+                          </a>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -652,7 +652,7 @@ export function PublicProfileModal({ isOpen, onClose, authorId }: PublicProfileM
           }
         }
       }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md z-[150]">
           <DialogHeader>
             <DialogTitle>Пожаловаться на пользователя</DialogTitle>
           </DialogHeader>
@@ -717,7 +717,7 @@ export function PublicProfileModal({ isOpen, onClose, authorId }: PublicProfileM
 
       {/* Reputation History Modal */}
       <Dialog open={reputationModalOpen} onOpenChange={setReputationModalOpen}>
-        <DialogContent className="max-h-[85vh] max-w-md p-0">
+        <DialogContent className="max-h-[85vh] max-w-md p-0 z-[150]">
           <DialogHeader className="px-4 pt-4 pr-12">
             <DialogTitle className="flex items-center gap-2">
               <Star className="h-5 w-5 text-yellow-500" />
@@ -808,7 +808,7 @@ export function PublicProfileModal({ isOpen, onClose, authorId }: PublicProfileM
 
       {/* Give Reputation Modal */}
       <Dialog open={giveRepOpen} onOpenChange={setGiveRepOpen}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-sm z-[150]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Star className="h-5 w-5 text-primary" />

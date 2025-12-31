@@ -119,7 +119,7 @@ export default function Index() {
     .sort((a, b) => (b.likes_count || 0) - (a.likes_count || 0))
     .slice(0, 4);
   
-  const latestArticles = articles.slice(0, 10);
+  const latestArticles = articles.slice(0, 3);
 
   const filteredArticles = selectedCategory
     ? latestArticles.filter((a) => a.category_id === selectedCategory.id)
