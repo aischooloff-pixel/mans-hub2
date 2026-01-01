@@ -3432,10 +3432,9 @@ async function handleProductDelete(callbackQuery: any, productId: string) {
 
 const REFERRERS_PER_PAGE = 15;
 
-// Get user's bot username from env
+// Get user's bot username - use correct bot name
 function getBotUsername(): string {
-  // Try to get from env or use default
-  return Deno.env.get('TELEGRAM_BOT_USERNAME') || 'ManHubBot';
+  return 'Man_Hub_Bot';
 }
 
 // Handle /ref command - list users who invite others
@@ -3659,14 +3658,15 @@ async function handleResetReferralBalance(callbackQuery: any, telegramId: string
   await handleReferrerProfile(callbackQuery, telegramId);
 }
 
-// Pending balance additions (for input handling)
-const pendingBalanceAdditions = new Map<number, string>(); // adminId -> targetTelegramId
-
-// Handle add balance start
+// Handle add balance start - store in admin_settings for persistence
 async function handleAddBalanceStart(callbackQuery: any, telegramId: string) {
   const { id, message, from } = callbackQuery;
 
-  pendingBalanceAdditions.set(from.id, telegramId);
+  // Store pending balance addition in admin_settings
+  await supabase.from('admin_settings').upsert({
+    key: `pending_balance_${from.id}`,
+    value: telegramId
+  }, { onConflict: 'key' });
 
   await answerCallbackQuery(id);
   await sendAdminMessage(message.chat.id, `💰 Введите сумму для добавления к балансу пользователя (в рублях):
@@ -3678,11 +3678,19 @@ async function handleAddBalanceStart(callbackQuery: any, telegramId: string) {
 
 // Handle balance input
 async function handleBalanceInput(chatId: number, adminId: number, text: string): Promise<boolean> {
-  const targetTelegramId = pendingBalanceAdditions.get(adminId);
-  if (!targetTelegramId) return false;
+  // Check if there's a pending balance addition
+  const { data: pending } = await supabase
+    .from('admin_settings')
+    .select('value')
+    .eq('key', `pending_balance_${adminId}`)
+    .maybeSingle();
+
+  if (!pending?.value) return false;
+
+  const targetTelegramId = pending.value;
 
   if (text === '/cancel') {
-    pendingBalanceAdditions.delete(adminId);
+    await supabase.from('admin_settings').delete().eq('key', `pending_balance_${adminId}`);
     await sendAdminMessage(chatId, '❌ Отменено');
     return true;
   }
@@ -3701,7 +3709,7 @@ async function handleBalanceInput(chatId: number, adminId: number, text: string)
     .maybeSingle();
 
   if (!user) {
-    pendingBalanceAdditions.delete(adminId);
+    await supabase.from('admin_settings').delete().eq('key', `pending_balance_${adminId}`);
     await sendAdminMessage(chatId, '❌ Пользователь не найден');
     return true;
   }
@@ -3713,7 +3721,8 @@ async function handleBalanceInput(chatId: number, adminId: number, text: string)
     .update({ referral_earnings: newBalance })
     .eq('telegram_id', targetTelegramId);
 
-  pendingBalanceAdditions.delete(adminId);
+  // Clean up pending state
+  await supabase.from('admin_settings').delete().eq('key', `pending_balance_${adminId}`);
 
   if (error) {
     console.error('Error adding balance:', error);

@@ -27,12 +27,12 @@ interface ReferralStats {
 }
 
 export function ReferralModal({ isOpen, onClose, referralCode }: ReferralModalProps) {
-  const { getBotUsername, webApp } = useTelegram();
+  const { webApp } = useTelegram();
   const [stats, setStats] = useState<ReferralStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const botUsername = getBotUsername();
+  const botUsername = 'Man_Hub_Bot';
   const referralLink = referralCode 
     ? `https://t.me/${botUsername}?start=ref_${referralCode}` 
     : '';
