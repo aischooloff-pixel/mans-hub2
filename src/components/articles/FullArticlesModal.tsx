@@ -207,14 +207,14 @@ export function FullArticlesModal({
                         </span>
                       </div>
 
-                      {/* Title */}
+                      {/* Topic */}
                       <h3 className="font-bold text-lg text-foreground mb-1">
-                        {article.title}
+                        {article.topic || article.title}
                       </h3>
 
-                      {/* Preview */}
+                      {/* Body text */}
                       <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                        {article.preview || article.body.substring(0, 100)}
+                        {article.body.substring(0, 150)}
                       </p>
 
                       {/* Divider */}
