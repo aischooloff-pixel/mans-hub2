@@ -289,7 +289,7 @@ export function PremiumModal({ isOpen, onClose }: PremiumModalProps) {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-2 text-center">
-              Промокоды в нашем <span className="underline">канале</span>
+              Промокоды в нашем <a href="https://t.me/Man_HubRu" target="_blank" rel="noopener noreferrer" className="underline text-primary hover:text-primary/80">канале</a>
             </p>
           </div>
 
@@ -477,9 +477,14 @@ export function PremiumModal({ isOpen, onClose }: PremiumModalProps) {
           </div>
 
           {/* Info text */}
-          <p className="text-center text-sm text-muted-foreground">
+          <a 
+            href="https://t.me/Man_HubRu" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="block text-center text-sm text-muted-foreground hover:text-primary transition-colors underline"
+          >
             Подробная информация о тарифах доступна в нашем Telegram-канале
-          </p>
+          </a>
         </div>
       </div>
     </div>

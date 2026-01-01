@@ -61,10 +61,6 @@ export function SideMenu({ isOpen, onClose }: SideMenuProps) {
     setIsSettingsOpen(true);
   };
 
-  const handleFAQClick = () => {
-    // TODO: Add FAQ link in future
-    onClose();
-  };
 
   const handleModalClose = (setter: (v: boolean) => void) => {
     setter(false);
@@ -81,8 +77,8 @@ export function SideMenu({ isOpen, onClose }: SideMenuProps) {
     // Show "Premium" for free users (leads to Plus first)
     ...(!isPaidUser ? [{ icon: Crown, label: 'Premium', path: undefined, onClick: handlePremiumClick }] : []),
     { icon: Settings, label: 'Настройки', path: undefined, onClick: handleSettingsClick },
-    { icon: HelpCircle, label: 'FAQ', path: undefined, onClick: handleFAQClick },
-    { icon: MessageSquare, label: 'Telegram канал', path: 'https://t.me/boyshub', external: true, onClick: undefined },
+    { icon: HelpCircle, label: 'О проекте', path: 'https://telegra.ph/Informaciya-o-proekte-01-01', external: true, onClick: undefined },
+    { icon: MessageSquare, label: 'Telegram канал', path: 'https://t.me/Man_HubRu', external: true, onClick: undefined },
   ];
 
   return (
