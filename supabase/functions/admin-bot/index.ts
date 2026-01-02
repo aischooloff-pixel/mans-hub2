@@ -1735,7 +1735,7 @@ async function handleSubGrantPlus(callbackQuery: any, telegramId: string) {
   if (!profile) { await answerCallbackQuery(id, '❌ Не найден'); return; }
 
   await supabase.from('profiles').update({ subscription_tier: 'plus', is_premium: true, premium_expires_at: expiresAt.toISOString(), updated_at: new Date().toISOString() }).eq('id', profile.id);
-  await sendUserMessage(telegramId, `🎉 Вам выдана <b>Plus</b> подписка на 30 дней!\n\n♾ Безлимит публикаций\n🤖 ИИ ассистент\n📝 Описание профиля\n\nДо: ${expiresAt.toLocaleDateString('ru-RU')}`);
+  await sendUserMessage(telegramId, `🎉 Вам выдана <b>Plus</b> подписка на 30 дней!\n\n🤖 ИИ ассистент\n♾ Безлимит публикаций\n📱 Соц сети в профиле\n🔐 Закрытое сообщество\n🔵 Значок Plus\n\nДо: ${expiresAt.toLocaleDateString('ru-RU')}`);
   await answerCallbackQuery(id, '✅ Plus выдан');
   await editMessageReplyMarkup(message.chat.id, message.message_id);
   await sendAdminMessage(message.chat.id, `✅ Plus выдан ${profile.username ? '@' + profile.username : telegramId}`);

@@ -42,7 +42,7 @@ export function UpgradeToPlusModal({ isOpen, onClose, feature = 'ai' }: UpgradeT
     { icon: Infinity, text: 'Безлимитные публикации' },
     { icon: MessageCircle, text: 'Соц сети в профиле' },
     { icon: Users, text: 'Закрытое сообщество' },
-    { icon: BadgeCheck, text: 'PRO значок' },
+    { icon: BadgeCheck, text: 'Значок Plus' },
   ];
 
   return (
