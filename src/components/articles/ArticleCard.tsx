@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { Heart, MessageCircle, Bookmark, TrendingUp, Share2, Crown } from 'lucide-react';
 import { Article } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -13,12 +14,14 @@ interface ArticleCardProps {
   onAuthorClick?: (authorId: string) => void;
 }
 
-export function ArticleCard({ article, variant = 'default', className, style, onClick, onAuthorClick }: ArticleCardProps) {
+export const ArticleCard = forwardRef<HTMLElement, ArticleCardProps>(
+  function ArticleCard({ article, variant = 'default', className, style, onClick, onAuthorClick }, ref) {
   const author = article.is_anonymous ? null : article.author;
 
   if (variant === 'featured') {
     return (
       <article
+        ref={ref}
         onClick={onClick}
         className={cn(
           'group relative flex h-[320px] w-[280px] flex-shrink-0 flex-col overflow-hidden rounded-lg bg-card transition-smooth hover:bg-card-elevated cursor-pointer',
@@ -96,6 +99,7 @@ export function ArticleCard({ article, variant = 'default', className, style, on
   if (variant === 'compact') {
     return (
       <article
+        ref={ref}
         onClick={onClick}
         className={cn(
           'group flex gap-4 rounded-lg bg-card p-4 transition-smooth hover:bg-card-elevated cursor-pointer',
@@ -137,6 +141,7 @@ export function ArticleCard({ article, variant = 'default', className, style, on
 
   return (
     <article
+      ref={ref}
       onClick={onClick}
       className={cn(
         'group overflow-hidden rounded-lg bg-card transition-smooth hover:bg-card-elevated shadow-card cursor-pointer',
@@ -245,4 +250,4 @@ export function ArticleCard({ article, variant = 'default', className, style, on
       </div>
     </article>
   );
-}
+});

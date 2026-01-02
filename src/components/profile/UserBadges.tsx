@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, forwardRef } from 'react';
 import { Badge, BadgeType, getBadgeInfo, useBadges } from '@/hooks/use-badges';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -97,37 +97,64 @@ interface AuthorBadgeProps {
   variant?: 'default' | 'compact';
 }
 
-export function AuthorBadge({ userProfileId, className, variant = 'default' }: AuthorBadgeProps) {
-  const { getTopBadge, getStaffBadge } = useBadges();
-  const [badge, setBadge] = useState<Badge | null>(null);
+export const AuthorBadge = forwardRef<HTMLSpanElement, AuthorBadgeProps>(
+  function AuthorBadge({ userProfileId, className, variant = 'default' }, ref) {
+    const { getTopBadge, getStaffBadge } = useBadges();
+    const [badge, setBadge] = useState<Badge | null>(null);
 
-  useEffect(() => {
-    if (!userProfileId) return;
-    // First try to get staff badge, if not found - get top badge
-    const fetchBadge = async () => {
-      const staffBadge = await getStaffBadge(userProfileId);
-      if (staffBadge) {
-        setBadge(staffBadge);
-      } else {
-        const topBadge = await getTopBadge(userProfileId);
-        setBadge(topBadge);
-      }
-    };
-    fetchBadge();
-  }, [userProfileId, getTopBadge, getStaffBadge]);
+    useEffect(() => {
+      if (!userProfileId) return;
+      // First try to get staff badge, if not found - get top badge
+      const fetchBadge = async () => {
+        const staffBadge = await getStaffBadge(userProfileId);
+        if (staffBadge) {
+          setBadge(staffBadge);
+        } else {
+          const topBadge = await getTopBadge(userProfileId);
+          setBadge(topBadge);
+        }
+      };
+      fetchBadge();
+    }, [userProfileId, getTopBadge, getStaffBadge]);
 
-  if (!badge) return null;
+    if (!badge) return null;
 
-  // Compact variant - smaller badge for collapsed article cards
-  if (variant === 'compact') {
+    // Compact variant - smaller badge for collapsed article cards
+    if (variant === 'compact') {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span 
+                ref={ref}
+                className={cn(
+                  'inline-flex items-center gap-0.5 rounded bg-primary/10 border border-primary/20 px-1 py-0 text-[10px] cursor-help',
+                  className
+                )}
+              >
+                <span>{badge.emoji}</span>
+                <span className="text-foreground/80">{badge.name}</span>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Получено: {new Date(badge.grantedAt).toLocaleDateString('ru-RU')}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+
     return (
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span className={cn(
-              'inline-flex items-center gap-0.5 rounded bg-primary/10 border border-primary/20 px-1 py-0 text-[10px] cursor-help',
-              className
-            )}>
+            <span 
+              ref={ref}
+              className={cn(
+                'inline-flex items-center gap-1 rounded-md bg-primary/10 border border-primary/20 px-1.5 py-0.5 text-xs cursor-help',
+                className
+              )}
+            >
               <span>{badge.emoji}</span>
               <span className="text-foreground/80">{badge.name}</span>
             </span>
@@ -139,23 +166,4 @@ export function AuthorBadge({ userProfileId, className, variant = 'default' }: A
       </TooltipProvider>
     );
   }
-
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span className={cn(
-            'inline-flex items-center gap-1 rounded-md bg-primary/10 border border-primary/20 px-1.5 py-0.5 text-xs cursor-help',
-            className
-          )}>
-            <span>{badge.emoji}</span>
-            <span className="text-foreground/80">{badge.name}</span>
-          </span>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Получено: {new Date(badge.grantedAt).toLocaleDateString('ru-RU')}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
+);
