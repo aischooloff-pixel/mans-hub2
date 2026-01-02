@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.cryptobot-webhook]
 verify_jwt = false
+
+[functions.send-moderation]
+verify_jwt = false
+
+[functions.send-edit-moderation]
+verify_jwt = false
