@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -51,7 +50,6 @@ export function CreateArticleModal({ isOpen, onClose, onSuccess, onDailyLimitRea
     topic: '',
     body: '',
     media_url: '',
-    is_anonymous: false,
     sources: '',
   });
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
@@ -135,7 +133,7 @@ export function CreateArticleModal({ isOpen, onClose, onSuccess, onDailyLimitRea
       body: formData.body.trim(),
       media_url: formData.media_url.trim() || undefined,
       media_type: mediaType || undefined,
-      is_anonymous: formData.is_anonymous,
+      is_anonymous: false,
       allow_comments: true,
       sources: sourcesArray,
     });
@@ -156,7 +154,6 @@ export function CreateArticleModal({ isOpen, onClose, onSuccess, onDailyLimitRea
         topic: '',
         body: '',
         media_url: '',
-        is_anonymous: false,
         sources: '',
       });
       setMediaPreview(null);
@@ -288,24 +285,6 @@ export function CreateArticleModal({ isOpen, onClose, onSuccess, onDailyLimitRea
               onChange={(e) => setFormData({ ...formData, sources: e.target.value })}
               placeholder="Ссылки на источники через запятую"
             />
-          </div>
-
-          {/* Toggles */}
-          <div className="rounded-xl bg-secondary/50 p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label>Анонимная публикация</Label>
-                <p className="text-xs text-muted-foreground">
-                  Ваше имя не будет отображаться
-                </p>
-              </div>
-              <Switch
-                checked={formData.is_anonymous}
-                onCheckedChange={(checked) =>
-                  setFormData({ ...formData, is_anonymous: checked })
-                }
-              />
-            </div>
           </div>
 
           {/* Submit */}
