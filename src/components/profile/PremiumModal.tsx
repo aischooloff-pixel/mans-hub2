@@ -48,6 +48,7 @@ export function PremiumModal({ isOpen, onClose, telegramId: propTelegramId, curr
   const [showManualPayment, setShowManualPayment] = useState(false);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [manualPaymentLoading, setManualPaymentLoading] = useState(false);
+  const [cardCopied, setCardCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { getInitData, webApp } = useTelegram();
   const [pricing, setPricing] = useState<PricingData>({
@@ -460,14 +461,25 @@ export function PremiumModal({ isOpen, onClose, telegramId: propTelegramId, curr
                         <div 
                           onClick={() => {
                             navigator.clipboard.writeText('2200701353425256');
+                            setCardCopied(true);
                             toast.success('Номер карты скопирован');
+                            setTimeout(() => setCardCopied(false), 2000);
                           }}
-                          className="flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+                          className="flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity active:scale-95"
                         >
                           <code className="text-lg font-mono font-bold text-foreground select-all">
                             2200 7013 5342 5256
                           </code>
-                          <Copy className="h-4 w-4 text-muted-foreground" />
+                          <div className="relative w-4 h-4">
+                            <Copy className={cn(
+                              "h-4 w-4 text-muted-foreground absolute inset-0 transition-all duration-300",
+                              cardCopied ? "opacity-0 scale-50" : "opacity-100 scale-100"
+                            )} />
+                            <Check className={cn(
+                              "h-4 w-4 text-green-500 absolute inset-0 transition-all duration-300",
+                              cardCopied ? "opacity-100 scale-100" : "opacity-0 scale-50"
+                            )} />
+                          </div>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1 text-center">Т-Банк • Максим П.</p>
                       </li>
